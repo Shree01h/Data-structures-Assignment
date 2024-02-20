@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+struct Stack {
+    char data[MAX_SIZE];
+    int top;
+};
+
+void initialize(struct Stack *s) {
+    s->top = -1;
+}
+
+void push(struct Stack *s, char c) {
+    if (s->top == MAX_SIZE - 1) {
+        printf("Stack Overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    s->data[++(s->top)] = c;
+}
+
+char pop(struct Stack *s) {
+    if (s->top == -1) {
+        printf("Stack Underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    char popped = s->data[s->top];
+    s->data[s->top] = '\0'; // Resetting the value at the top
+    (s->top)--;
+    return popped;
+}
+
+bool isValid(char *s) {
+    struct Stack stack;
+    initialize(&stack);
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] == '(' || s[i] == '[' || s[i] == '{') {
+            push(&stack, s[i]);
+        } else {
+            if ((s[i] == ')' && stack.data[stack.top] == '(') ||
+                (s[i] == ']' && stack.data[stack.top] == '[') ||
+                (s[i] == '}' && stack.data[stack.top] == '{')) {
+                pop(&stack);
+            } else {
+                return false;
+            }
+        }
+    }
+    return stack.top == -1;
+}
+
+int main() {
+    char expr[MAX_SIZE];
+    printf("Enter a string containing parentheses: ");
+    scanf("%s", expr);
+    if (isValid(expr)) {
+        printf("The string has valid parentheses.\n");
+    } else {
+        printf("The string does not have valid parentheses.\n");
+    }
+    return 0;
+}
