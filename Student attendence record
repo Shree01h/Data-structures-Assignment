@@ -1,0 +1,25 @@
+bool checkRecord(char * s) {
+    // Initialize counters for absent and late days
+    int absent = 0, late = 0, size = strlen(s);
+    
+    // Iterate over attendance record
+    for(int i = 0; i < size; i++){
+        // If student was absent on this day
+        if(s[i] == 'A') {
+            absent++;         // Increment 'absent' counter
+            late = 0;         // Reset 'late' counter (because it's not a consecutive late day)
+        }
+        // If student was late on this day
+        else if(s[i] == 'L')
+            late++;            // Increment 'late' counter
+        // If student was present on this day
+        else
+            late = 0;          // Reset 'late' counter (because it's not a consecutive late day)
+        
+        // If student was absent for 2 or more days OR late for 3 or more consecutive days
+        if(absent == 2 || late == 3)
+            return false;       // Student doesn't qualify for an attendance award
+    }
+    // If student was absent for less than 2 days AND never late for 3 or more consecutive days
+    return true;                // Student qualifies for an attendance award
+}
