@@ -1,0 +1,122 @@
+#define LENGTH 0x100
+typedef struct {
+    int *aQueue, *bQueue;
+    int aFront, aRear, bFront, bRear;
+} MyStack;
+int updateQueueIndexValue(int index){
+    if (index == LENGTH - 1){
+        index = 0;
+    }
+    else{
+        index++;
+    }
+    return index;
+}
+MyStack* myStackCreate() {
+    MyStack* myStack = (MyStack*)malloc(sizeof(MyStack));
+    int * aQueue = (int *)malloc(sizeof(int)*LENGTH);
+    int * bQueue = (int *)malloc(sizeof(int)*LENGTH);
+    myStack->aQueue = aQueue;
+    myStack->bQueue = bQueue;
+    myStack->aFront = 1;
+    myStack->aRear = 0;
+    myStack->bFront = 1;
+    myStack->bRear = 0;
+    return myStack;
+}
+
+/** Push element x onto stack. */
+void myStackPush(MyStack* obj, int x) {
+    if (obj->aFront - obj->aRear != 1){
+        obj->aRear = updateQueueIndexValue(obj->aRear);
+        obj->aQueue[obj->aRear] = x;
+    }
+    else{
+        obj->bRear = updateQueueIndexValue(obj->bRear);
+        obj->bQueue[obj->bRear] = x;
+    }
+}
+int myStackPop(MyStack* obj) {
+    if (obj->aFront - obj->aRear != 1){
+        while (obj->aFront - obj->aRear != 0){
+            obj->bRear = updateQueueIndexValue(obj->bRear);
+            obj->bQueue[obj->bRear] = obj->aQueue[(obj->aFront)];
+            obj->aFront = updateQueueIndexValue(obj->aFront);
+        }
+        int a = obj->aQueue[(obj->aFront)];
+        obj->aFront = updateQueueIndexValue(obj->aFront);
+        return a;
+    }
+    else{
+        if (obj->bFront - obj->bRear != 1){
+            while (obj->bFront - obj->bRear != 0){
+                obj->aRear = updateQueueIndexValue(obj->aRear);
+                obj->aQueue[obj->aRear] = obj->bQueue[obj->bFront];
+                obj->bFront = updateQueueIndexValue(obj->bFront);
+            }
+            int b = obj->bQueue[obj->bFront];
+            obj->bFront = updateQueueIndexValue(obj->bFront);
+            return b;
+        }
+    }
+    return 0;
+}
+int myStackTop(MyStack* obj) {
+    if (obj->aFront - obj->aRear != 1){
+        while (obj->aFront - obj->aRear != 0){
+            obj->bRear = updateQueueIndexValue(obj->bRear);
+            obj->bQueue[obj->bRear] = obj->aQueue[(obj->aFront)];
+            obj->aFront = updateQueueIndexValue(obj->aFront);
+        }
+        int a = obj->aQueue[(obj->aFront)];
+        obj->bRear = updateQueueIndexValue(obj->bRear);
+        obj->bQueue[obj->bRear] = obj->aQueue[(obj->aFront)];
+        obj->aFront = updateQueueIndexValue(obj->aFront);
+        return a;
+    }
+    else{
+        if (obj->bFront - obj->bRear != 1){
+            while (obj->bFront - obj->bRear != 0){
+                obj->aRear = updateQueueIndexValue(obj->aRear);
+                obj->aQueue[obj->aRear] = obj->bQueue[obj->bFront];
+                obj->bFront = updateQueueIndexValue(obj->bFront);
+            }
+            int b = obj->bQueue[(obj->bFront)];
+            obj->aRear = updateQueueIndexValue(obj->aRear);
+            obj->aQueue[obj->aRear] = obj->bQueue[obj->bFront];
+            obj->bFront = updateQueueIndexValue(obj->bFront);
+            return b;
+        }
+    }
+    return 0;
+}
+bool myStackEmpty(MyStack* obj) {
+    if (obj){
+        if ((obj->aFront - obj->aRear == 1) && (obj->bFront - obj->bRear == 1)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        return true;
+    }
+}
+
+void myStackFree(MyStack* obj) {
+    if (obj){
+        if (obj->aQueue)
+            free(obj->aQueue);
+
+        if (obj->bQueue)
+            free(obj->bQueue);
+
+        obj->aFront = 1;
+        obj->aRear = 0;
+        obj->bFront = 1;
+        obj->bRear = 0;
+
+        free(obj);
+    }
+}
